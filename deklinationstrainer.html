@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deklinationstrainer – der, die, das</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --brand:#1f7ae0;
+    --brand-dark:#155fb0;
+    --ink:#16233a;
+    --muted:#5b6b83;
+    --line:#e2e8f0;
+    --surface:#ffffff;
+    --radius:14px;
+    --shadow-sm:0 1px 2px rgba(16,32,64,.06), 0 2px 8px rgba(16,32,64,.06);
+    --shadow-md:0 4px 16px rgba(16,32,64,.10);
+    --shadow-lg:0 12px 32px rgba(16,32,64,.16);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+    font-family:"Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+        radial-gradient(900px 500px at 10% -10%, #e8f1ff 0%, transparent 60%),
+        radial-gradient(900px 500px at 110% 0%, #fff7d9 0%, transparent 55%),
+        #f4f6fb;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+}
+
+.container{
+    width:96%;
+    max-width:1400px;
+    margin:25px auto;
+}
+
+.topArea{
+    background:#FFFF00;
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:20px;
+    box-shadow:var(--shadow-md);
+    padding:22px 26px;
+    margin-bottom:25px;
+    text-align:center;
+}
+
+h1{
+    color:var(--ink);
+    font-weight:800;
+    letter-spacing:-.02em;
+    margin-bottom:6px;
+}
+
+.topArea p{
+    color:#4a4a1a;
+    font-weight:600;
+}
+
+h2{
+    font-weight:700;
+    font-size:19px;
+    color:var(--ink);
+    letter-spacing:-.01em;
+    margin-bottom:15px;
+}
+
+#filter{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:var(--shadow-sm);
+    padding:24px 26px;
+    margin-bottom:25px;
+}
+
+.topicSelectRow{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+}
+
+.topicSelectRow label{
+    font-weight:700;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--muted);
+}
+
+select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding:10px 38px 10px 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background-color:#e8f0fe;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235b6b83' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    color:var(--brand-dark);
+    cursor:pointer;
+    min-width:280px;
+}
+
+.topicPanel{ display:none; }
+.topicPanel.active{ display:block; }
+
+.filterGroups{
+    display:flex;
+    flex-wrap:wrap;
+    gap:30px;
+    margin-bottom:16px;
+}
+
+.filterGroup{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-width:220px;
+}
+
+.filterGroup .groupTitle{
+    font-weight:700;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--muted);
+    margin-bottom:4px;
+}
+
+.filterGroup label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:600;
+    cursor:pointer;
+    padding:4px 2px;
+}
+
+.filterGroup input[type="checkbox"]{
+    width:17px;
+    height:17px;
+    accent-color:var(--brand);
+    cursor:pointer;
+}
+
+.groupButtons{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+}
+
+.groupButtons button{
+    font-size:12px;
+    padding:6px 10px;
+    background:#eef3fa;
+    color:var(--ink);
+    box-shadow:none;
+    border-radius:8px;
+    font-weight:700;
+}
+
+.groupButtons button:hover{
+    background:#e0e9f6;
+}
+
+button{
+    font-family:inherit;
+    font-weight:700;
+    border-radius:12px;
+    padding:10px 18px;
+    border:none;
+    background:var(--brand);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:var(--shadow-sm);
+    transition:background .15s, transform .12s, box-shadow .15s;
+}
+
+button:hover{ background:var(--brand-dark); }
+button:active{ transform:translateY(1px); }
+
+#startBtn{
+    padding:14px 28px;
+    font-size:16px;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--brand) 0%, #38a1f5 100%);
+    box-shadow:0 6px 18px rgba(31,122,224,.35);
+    margin-top:6px;
+}
+
+#startBtn:hover{ filter:brightness(1.05); }
+
+#exercise{ display:none; }
+
+.tableWrapper{
+    overflow:auto;
+    border:1px solid var(--line);
+    background:white;
+    border-radius:16px;
+    box-shadow:var(--shadow-md);
+    margin-bottom:20px;
+}
+
+table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:760px;
+}
+
+thead th{
+    position:sticky;
+    top:0;
+    z-index:5;
+    background:#4FADEA;
+    color:#fff;
+    border:1px solid #d7e2ee;
+    padding:12px 10px;
+    text-align:center;
+    font-weight:800;
+}
+
+thead th:first-child{
+    background:#FFFF00;
+    color:#000;
+}
+
+thead th .subLabel{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    opacity:.85;
+    margin-top:2px;
+}
+
+tbody td{
+    border:1px solid #e2e8f0;
+    padding:8px;
+    text-align:center;
+    background:white;
+    vertical-align:middle;
+}
+
+tbody td:first-child{
+    position:sticky;
+    left:0;
+    background:#FFF2CC;
+    z-index:4;
+    text-align:left;
+    font-weight:700;
+    min-width:230px;
+}
+
+tbody td:first-child .caseFrage{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+}
+
+tbody tr.groupStart td{
+    border-top:3px solid #9E9E9E;
+}
+
+input[type="text"]{
+    width:100%;
+    min-width:110px;
+    height:38px;
+    padding:6px 10px;
+    text-align:center;
+    border:1px solid #d7dfea;
+    border-radius:9px;
+    font-family:inherit;
+    font-size:14px;
+    box-sizing:border-box;
+}
+
+input[type="text"]:disabled{
+    background:#f1f1f1;
+    color:#aaa;
+}
+
+.correct{
+    background:#C6EFCE !important;
+    border:2px solid #2E7D32 !important;
+}
+
+.wrong{
+    background:#FFC7CE !important;
+    border:2px solid #C62828 !important;
+}
+
+.solution{
+    display:block;
+    margin-top:4px;
+    font-size:11px;
+    color:#0B8043;
+    font-weight:bold;
+}
+
+.exerciseButtons{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin:20px 0;
+}
+
+.exerciseButtons button{
+    min-width:170px;
+}
+
+#solutionBtn{
+    background:#fff;
+    border:1px solid var(--line);
+    color:var(--muted);
+    box-shadow:var(--shadow-sm);
+}
+
+#solutionBtn:hover{ background:#f5f8fc; color:var(--ink); }
+
+#resetBtn{
+    background:#eef3fa;
+    color:var(--ink);
+    box-shadow:none;
+}
+
+#resetBtn:hover{ background:#e0e9f6; }
+
+#statistics{
+    margin-top:10px;
+    padding:20px;
+    background:white;
+    border:1px solid var(--line);
+    border-radius:20px;
+    box-shadow:var(--shadow-sm);
+    text-align:center;
+}
+
+#statistics p{
+    margin:6px 0;
+    font-size:17px;
+    color:var(--muted);
+}
+
+#score, #percent{
+    color:var(--ink);
+    font-weight:800;
+}
+
+.hint{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:6px;
+    margin-bottom:14px;
+}
+
+@media(max-width:640px){
+    .filterGroups{ gap:18px; }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topArea">
+    <h1>Deklinationstrainer</h1>
+    <p>Artikel, der-Wörter, Adjektive, Pronomen und Zeitangaben – mit Mann, Frau, Kind und Personen</p>
+</div>
+
+<section id="filter">
+
+    <div class="topicSelectRow">
+        <label for="topicSelect">Thema:</label>
+        <select id="topicSelect">
+            <option value="artikel">Artikel (bestimmt / unbestimmt / kein / mein)</option>
+            <option value="derwoerter">der-Wörter (dies-, jed-, welch-, all-)</option>
+            <option value="adjektiv">Adjektivdeklination</option>
+            <option value="pronomen">Pronomen (Personal-, Reflexiv-, Reziprok-)</option>
+            <option value="zeitangaben">Zeitangaben (nächst-, letzt-, dies-, jed-)</option>
+        </select>
+    </div>
+
+    <!-- ================= ARTIKEL ================= -->
+    <div class="topicPanel" id="panel-artikel">
+
+        <h2>Übung zusammenstellen</h2>
+
+        <div class="filterGroups">
+
+            <div class="filterGroup">
+                <span class="groupTitle">Artikeltyp</span>
+                <div id="artikelTypeSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="artikelTypeSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="artikelTypeSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+            <div class="filterGroup">
+                <span class="groupTitle">Fall (Kasus)</span>
+                <div id="artikelCaseSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="artikelCaseSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="artikelCaseSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="hint">
+            Hinweis: Der unbestimmte Artikel (ein / eine) hat im Deutschen keinen Plural –
+            diese Felder bei „Personen" bleiben deaktiviert.
+        </p>
+
+    </div>
+
+    <!-- ================= DER-WÖRTER ================= -->
+    <div class="topicPanel" id="panel-derwoerter">
+
+        <h2>Übung zusammenstellen</h2>
+
+        <div class="filterGroups">
+
+            <div class="filterGroup">
+                <span class="groupTitle">der-Wort</span>
+                <div id="derwoerterTypeSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="derwoerterTypeSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="derwoerterTypeSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+            <div class="filterGroup">
+                <span class="groupTitle">Fall (Kasus)</span>
+                <div id="derwoerterCaseSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="derwoerterCaseSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="derwoerterCaseSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="hint">
+            Hinweis: „jed-" wird nur im Singular verwendet (Personen-Felder deaktiviert).
+            „all-" wird vor Mann/Frau/Kind im Singular kaum attributiv gebraucht, daher nur im
+            Plural aktiv („aller Anfang ist schwer" ist eine feste Redewendung, keine allgemeine Regel).
+        </p>
+
+    </div>
+
+    <!-- ================= ADJEKTIV ================= -->
+    <div class="topicPanel" id="panel-adjektiv">
+
+        <h2>Übung zusammenstellen</h2>
+
+        <div class="filterGroups">
+
+            <div class="filterGroup">
+                <span class="groupTitle">Artikeltyp</span>
+                <div id="adjektivTypeSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="adjektivTypeSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="adjektivTypeSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+            <div class="filterGroup">
+                <span class="groupTitle">Fall (Kasus)</span>
+                <div id="adjektivCaseSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="adjektivCaseSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="adjektivCaseSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="hint">
+            Beispieladjektiv: „groß". Nach bestimmtem Artikel gelten schwache Endungen
+            (der große Mann), nach unbestimmtem/kein-/mein-Artikel gemischte Endungen
+            (ein großer Mann, keine große Frau). Unbestimmter Artikel hat wieder keinen Plural.
+        </p>
+
+    </div>
+
+    <!-- ================= PRONOMEN ================= -->
+    <div class="topicPanel" id="panel-pronomen">
+
+        <h2>Übung zusammenstellen</h2>
+
+        <div class="filterGroups">
+
+            <div class="filterGroup">
+                <span class="groupTitle">Pronomenart</span>
+                <label><input type="checkbox" id="pronomenPersonal" checked> Personalpronomen (ich, du, er ...)</label>
+                <label><input type="checkbox" id="pronomenReflexiv" checked> Reflexivpronomen (mich, dich, sich ...)</label>
+            </div>
+
+        </div>
+
+        <p class="hint">
+            Der Genitiv der Personalpronomen (meiner, deiner ...) ist im heutigen Deutsch selten
+            und wirkt gehoben. Bei den Reflexivformen im Plural (wir/ihr/sie) ist zusätzlich
+            „einander" als reziproke Form richtig (wir helfen uns / wir helfen einander).
+        </p>
+
+    </div>
+
+    <!-- ================= ZEITANGABEN ================= -->
+    <div class="topicPanel" id="panel-zeitangaben">
+
+        <h2>Übung zusammenstellen</h2>
+
+        <div class="filterGroups">
+
+            <div class="filterGroup">
+                <span class="groupTitle">Wort</span>
+                <div id="zeitTypeSelection"></div>
+                <div class="groupButtons">
+                    <button type="button" data-group="zeitTypeSelection" class="allBtn">Alle</button>
+                    <button type="button" data-group="zeitTypeSelection" class="noneBtn">Keine</button>
+                </div>
+            </div>
+
+        </div>
+
+        <p class="hint">
+            Zeitangaben ohne Präposition stehen im Akkusativ (nächsten Montag, letzte Woche,
+            diesen Monat). „jede Ferien" ist nicht gebräuchlich, daher deaktiviert.
+        </p>
+
+    </div>
+
+    <button id="startBtn" type="button">Übung starten</button>
+
+</section>
+
+<section id="exercise">
+
+    <div class="tableWrapper">
+
+        <table id="declTable">
+
+            <thead>
+                <tr id="headerRow"></tr>
+            </thead>
+
+            <tbody id="tableBody"></tbody>
+
+        </table>
+
+    </div>
+
+    <div class="exerciseButtons">
+
+        <button id="checkBtn" type="button">✔ Antworten prüfen</button>
+        <button id="solutionBtn" type="button">💡 Lösungen anzeigen</button>
+        <button id="resetBtn" type="button">↺ Zurücksetzen</button>
+
+    </div>
+
+    <div id="statistics">
+        <h2>Ergebnis</h2>
+        <p>Richtig: <span id="score">0 / 0</span></p>
+        <p>Prozent: <span id="percent">0 %</span></p>
+    </div>
+
+</section>
+
+</div>
+
+<script>
+
+/* ===========================================================
+   GEMEINSAME DATEN: FÄLLE & NOMEN-SPALTEN
+=========================================================== */
+
+const cases = [
+    { id: "nom", name: "Nominativ", frage: "wer / was?", beispielverb: "sein" },
+    { id: "gen", name: "Genitiv",    frage: "wessen?",     beispielverb: "gedenken" },
+    { id: "dat", name: "Dativ",      frage: "wem?",        beispielverb: "helfen" },
+    { id: "akk", name: "Akkusativ",  frage: "wen / was?",  beispielverb: "sehen" }
+];
+
+const nounColumns = [
+    { id: "mann",     label: "der Mann",     sub: "Maskulinum" },
+    { id: "frau",     label: "die Frau",     sub: "Femininum" },
+    { id: "kind",     label: "das Kind",     sub: "Neutrum" },
+    { id: "personen", label: "die Personen", sub: "Plural" }
+];
+
+
+/* ===========================================================
+   THEMA 1: ARTIKEL
+=========================================================== */
+
+const articleTypes = [
+    { id: "bestimmt",   name: "bestimmter Artikel",   example: "der / die / das" },
+    { id: "unbestimmt", name: "unbestimmter Artikel", example: "ein / eine" },
+    { id: "kein",       name: "verneinter Artikel",   example: "kein / keine" },
+    { id: "mein",       name: "Possessivartikel",     example: "mein / meine" }
+];
+
+const articleForms = {
+
+    bestimmt: {
+        mann:     { nom:"der Mann",     gen:"des Mannes",  dat:"dem Mann",  datAlt:"dem Manne",  akk:"den Mann" },
+        frau:     { nom:"die Frau",     gen:"der Frau",    dat:"der Frau",                       akk:"die Frau" },
+        kind:     { nom:"das Kind",     gen:"des Kindes",  dat:"dem Kind",  datAlt:"dem Kinde",  akk:"das Kind" },
+        personen: { nom:"die Personen", gen:"der Personen",dat:"den Personen",                   akk:"die Personen" }
+    },
+
+    unbestimmt: {
+        mann:     { nom:"ein Mann",     gen:"eines Mannes",  dat:"einem Mann",  datAlt:"einem Manne",  akk:"einen Mann" },
+        frau:     { nom:"eine Frau",    gen:"einer Frau",    dat:"einer Frau",                         akk:"eine Frau" },
+        kind:     { nom:"ein Kind",     gen:"eines Kindes",  dat:"einem Kind",  datAlt:"einem Kinde",  akk:"ein Kind" },
+        personen: { nom:null,           gen:null,            dat:null,                                 akk:null }
+    },
+
+    kein: {
+        mann:     { nom:"kein Mann",     gen:"keines Mannes",  dat:"keinem Mann",  datAlt:"keinem Manne",  akk:"keinen Mann" },
+        frau:     { nom:"keine Frau",    gen:"keiner Frau",    dat:"keiner Frau",                         akk:"keine Frau" },
+        kind:     { nom:"kein Kind",     gen:"keines Kindes",  dat:"keinem Kind",  datAlt:"keinem Kinde",  akk:"kein Kind" },
+        personen: { nom:"keine Personen",gen:"keiner Personen",dat:"keinen Personen",                     akk:"keine Personen" }
+    },
+
+    mein: {
+        mann:     { nom:"mein Mann",     gen:"meines Mannes",  dat:"meinem Mann",  datAlt:"meinem Manne",  akk:"meinen Mann" },
+        frau:     { nom:"meine Frau",    gen:"meiner Frau",    dat:"meiner Frau",                         akk:"meine Frau" },
+        kind:     { nom:"mein Kind",     gen:"meines Kindes",  dat:"meinem Kind",  datAlt:"meinem Kinde",  akk:"mein Kind" },
+        personen: { nom:"meine Personen",gen:"meiner Personen",dat:"meinen Personen",                     akk:"meine Personen" }
+    }
+
+};
+
+function articleFormsLookup(typeId, colId, caseId) {
+    const col = articleForms[typeId][colId];
+    const main = col[caseId];
+    if (main === null || main === undefined) return null;
+    return { main, alt: caseId === "dat" ? col.datAlt : undefined };
+}
+
+
+/* ===========================================================
+   THEMA 2: DER-WÖRTER (dies-, jed-, welch-, all-)
+=========================================================== */
+
+const derWordTypes = [
+    { id: "dies",  name: "dies- (dieser/diese/dieses)" },
+    { id: "jed",   name: "jed- (jeder/jede/jedes)" },
+    { id: "welch", name: "welch- (welcher/welche/welches)" },
+    { id: "all",   name: "all- (aller/alle/alles)" }
+];
+
+const derWordForms = {
+
+    dies: {
+        mann:     { nom:"dieser Mann",  gen:"dieses Mannes",  dat:"diesem Mann",  datAlt:"diesem Manne",  akk:"diesen Mann" },
+        frau:     { nom:"diese Frau",   gen:"dieser Frau",    dat:"dieser Frau",                          akk:"diese Frau" },
+        kind:     { nom:"dieses Kind",  gen:"dieses Kindes",  dat:"diesem Kind",  datAlt:"diesem Kinde",  akk:"dieses Kind" },
+        personen: { nom:"diese Personen", gen:"dieser Personen", dat:"diesen Personen",                   akk:"diese Personen" }
+    },
+
+    jed: {
+        mann:     { nom:"jeder Mann",  gen:"jedes Mannes",  dat:"jedem Mann",  datAlt:"jedem Manne",  akk:"jeden Mann" },
+        frau:     { nom:"jede Frau",   gen:"jeder Frau",    dat:"jeder Frau",                        akk:"jede Frau" },
+        kind:     { nom:"jedes Kind",  gen:"jedes Kindes",  dat:"jedem Kind",  datAlt:"jedem Kinde",  akk:"jedes Kind" },
+        personen: { nom:null, gen:null, dat:null, akk:null }
+    },
+
+    welch: {
+        mann:     { nom:"welcher Mann",  gen:"welches Mannes",  dat:"welchem Mann",  datAlt:"welchem Manne",  akk:"welchen Mann" },
+        frau:     { nom:"welche Frau",   gen:"welcher Frau",    dat:"welcher Frau",                          akk:"welche Frau" },
+        kind:     { nom:"welches Kind",  gen:"welches Kindes",  dat:"welchem Kind",  datAlt:"welchem Kinde",  akk:"welches Kind" },
+        personen: { nom:"welche Personen", gen:"welcher Personen", dat:"welchen Personen",                   akk:"welche Personen" }
+    },
+
+    all: {
+        mann:     { nom:null, gen:null, dat:null, akk:null },
+        frau:     { nom:null, gen:null, dat:null, akk:null },
+        kind:     { nom:null, gen:null, dat:null, akk:null },
+        personen: { nom:"alle Personen", gen:"aller Personen", dat:"allen Personen", akk:"alle Personen" }
+    }
+
+};
+
+function derWordFormsLookup(typeId, colId, caseId) {
+    const col = derWordForms[typeId][colId];
+    const main = col[caseId];
+    if (main === null || main === undefined) return null;
+    return { main, alt: caseId === "dat" ? col.datAlt : undefined };
+}
+
+
+/* ===========================================================
+   THEMA 3: ADJEKTIVDEKLINATION (Beispieladjektiv: groß)
+=========================================================== */
+
+const adjForms = {
+
+    bestimmt: {
+        mann:     { nom:"der große Mann",   gen:"des großen Mannes",  dat:"dem großen Mann",  datAlt:"dem großen Manne",  akk:"den großen Mann" },
+        frau:     { nom:"die große Frau",   gen:"der großen Frau",    dat:"der großen Frau",                              akk:"die große Frau" },
+        kind:     { nom:"das große Kind",   gen:"des großen Kindes",  dat:"dem großen Kind",  datAlt:"dem großen Kinde",  akk:"das große Kind" },
+        personen: { nom:"die großen Personen", gen:"der großen Personen", dat:"den großen Personen",                      akk:"die großen Personen" }
+    },
+
+    unbestimmt: {
+        mann:     { nom:"ein großer Mann", gen:"eines großen Mannes", dat:"einem großen Mann", datAlt:"einem großen Manne", akk:"einen großen Mann" },
+        frau:     { nom:"eine große Frau", gen:"einer großen Frau",   dat:"einer großen Frau",                              akk:"eine große Frau" },
+        kind:     { nom:"ein großes Kind", gen:"eines großen Kindes", dat:"einem großen Kind", datAlt:"einem großen Kinde", akk:"ein großes Kind" },
+        personen: { nom:null, gen:null, dat:null, akk:null }
+    },
+
+    kein: {
+        mann:     { nom:"kein großer Mann", gen:"keines großen Mannes", dat:"keinem großen Mann", datAlt:"keinem großen Manne", akk:"keinen großen Mann" },
+        frau:     { nom:"keine große Frau", gen:"keiner großen Frau",   dat:"keiner großen Frau",                               akk:"keine große Frau" },
+        kind:     { nom:"kein großes Kind", gen:"keines großen Kindes", dat:"keinem großen Kind", datAlt:"keinem großen Kinde", akk:"kein großes Kind" },
+        personen: { nom:"keine großen Personen", gen:"keiner großen Personen", dat:"keinen großen Personen",                    akk:"keine großen Personen" }
+    },
+
+    mein: {
+        mann:     { nom:"mein großer Mann", gen:"meines großen Mannes", dat:"meinem großen Mann", datAlt:"meinem großen Manne", akk:"meinen großen Mann" },
+        frau:     { nom:"meine große Frau", gen:"meiner großen Frau",   dat:"meiner großen Frau",                               akk:"meine große Frau" },
+        kind:     { nom:"mein großes Kind", gen:"meines großen Kindes", dat:"meinem großen Kind", datAlt:"meinem großen Kinde", akk:"mein großes Kind" },
+        personen: { nom:"meine großen Personen", gen:"meiner großen Personen", dat:"meinen großen Personen",                    akk:"meine großen Personen" }
+    }
+
+};
+
+function adjFormsLookup(typeId, colId, caseId) {
+    const col = adjForms[typeId][colId];
+    const main = col[caseId];
+    if (main === null || main === undefined) return null;
+    return { main, alt: caseId === "dat" ? col.datAlt : undefined };
+}
+
+
+/* ===========================================================
+   THEMA 4: PRONOMEN
+=========================================================== */
+
+const pronounColumns = [
+    { id: "ich",  label: "ich", sub: "1. Person Sg." },
+    { id: "du",   label: "du",  sub: "2. Person Sg." },
+    { id: "er",   label: "er",  sub: "3. Person Sg. (m.)" },
+    { id: "sie3", label: "sie", sub: "3. Person Sg. (f.)" },
+    { id: "es",   label: "es",  sub: "3. Person Sg. (n.)" },
+    { id: "wir",  label: "wir", sub: "1. Person Pl." },
+    { id: "ihr",  label: "ihr", sub: "2. Person Pl." },
+    { id: "siePl",label: "sie", sub: "3. Person Pl." }
+];
+
+const personalForms = {
+    nom: { ich:"ich",    du:"du",    er:"er",    sie3:"sie",   es:"es",    wir:"wir", ihr:"ihr", siePl:"sie" },
+    gen: { ich:"meiner", du:"deiner",er:"seiner",sie3:"ihrer", es:"seiner",wir:"unser",ihr:"euer",siePl:"ihrer" },
+    dat: { ich:"mir",    du:"dir",   er:"ihm",   sie3:"ihr",   es:"ihm",   wir:"uns", ihr:"euch",siePl:"ihnen" },
+    akk: { ich:"mich",   du:"dich",  er:"ihn",   sie3:"sie",   es:"es",    wir:"uns", ihr:"euch",siePl:"sie" }
+};
+
+const reflexiveForms = {
+    dat: { ich:"mir",  du:"dir",  er:"sich", sie3:"sich", es:"sich", wir:"uns", ihr:"euch", siePl:"sich" },
+    akk: { ich:"mich", du:"dich", er:"sich", sie3:"sich", es:"sich", wir:"uns", ihr:"euch", siePl:"sich" }
+};
+
+const reciprocalColumns = ["wir", "ihr", "siePl"];
+
+function pronomenFormsLookup(typeId, colId, caseId) {
+
+    if (typeId === "personal") {
+        const main = personalForms[caseId] ? personalForms[caseId][colId] : null;
+        return main ? { main } : null;
+    }
+
+    if (typeId === "reflexiv") {
+        const main = reflexiveForms[caseId] ? reflexiveForms[caseId][colId] : null;
+        if (!main) return null;
+        const alt = reciprocalColumns.includes(colId) ? "einander" : undefined;
+        return { main, alt };
+    }
+
+    return null;
+
+}
+
+
+/* ===========================================================
+   THEMA 5: ZEITANGABEN
+=========================================================== */
+
+const timeWords = [
+    { id: "naechst", name: "nächst-" },
+    { id: "letzt",   name: "letzt-" },
+    { id: "dies",    name: "dies-" },
+    { id: "jed",     name: "jed-" }
+];
+
+const timeColumns = [
+    { id: "montag", label: "der Montag", sub: "Maskulinum" },
+    { id: "woche",  label: "die Woche",  sub: "Femininum" },
+    { id: "jahr",   label: "das Jahr",   sub: "Neutrum" },
+    { id: "ferien", label: "die Ferien", sub: "nur Plural" }
+];
+
+const timeForms = {
+    naechst: { montag:"nächsten Montag", woche:"nächste Woche", jahr:"nächstes Jahr", ferien:"nächste Ferien" },
+    letzt:   { montag:"letzten Montag",  woche:"letzte Woche",  jahr:"letztes Jahr",  ferien:"letzte Ferien" },
+    dies:    { montag:"diesen Montag",   woche:"diese Woche",   jahr:"dieses Jahr",   ferien:"diese Ferien" },
+    jed:     { montag:"jeden Montag",    woche:"jede Woche",    jahr:"jedes Jahr",    ferien:null }
+};
+
+function zeitFormsLookup(typeId, colId) {
+    const main = timeForms[typeId][colId];
+    return main ? { main } : null;
+}
+
+
+/* ===========================================================
+   FILTER-UI: GEMEINSAME HELFER
+=========================================================== */
+
+function createSelection(container, items, checkedByDefault) {
+
+    container.innerHTML = "";
+
+    items.forEach((item, index) => {
+
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+
+        checkbox.type = "checkbox";
+        checkbox.checked = checkedByDefault;
+        checkbox.value = item.id;
+        checkbox.dataset.index = index;
+
+        label.appendChild(checkbox);
+        label.append(" " + item.name + (item.example ? " (" + item.example + ")" : ""));
+
+        container.appendChild(label);
+
+    });
+
+}
+
+function getChecked(container, items) {
+    return [...container.querySelectorAll("input:checked")]
+        .map(cb => items[Number(cb.dataset.index)]);
+}
+
+createSelection(document.getElementById("artikelTypeSelection"), articleTypes, true);
+createSelection(document.getElementById("artikelCaseSelection"), cases, true);
+
+createSelection(document.getElementById("derwoerterTypeSelection"), derWordTypes, true);
+createSelection(document.getElementById("derwoerterCaseSelection"), cases, true);
+
+createSelection(document.getElementById("adjektivTypeSelection"), articleTypes, true);
+createSelection(document.getElementById("adjektivCaseSelection"), cases, true);
+
+createSelection(document.getElementById("zeitTypeSelection"), timeWords, true);
+
+document.querySelectorAll(".allBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.getElementById(btn.dataset.group)
+            .querySelectorAll("input").forEach(cb => cb.checked = true);
+    });
+});
+
+document.querySelectorAll(".noneBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        document.getElementById(btn.dataset.group)
+            .querySelectorAll("input").forEach(cb => cb.checked = false);
+    });
+});
+
+
+/* ===========================================================
+   THEMEN-UMSCHALTUNG
+=========================================================== */
+
+const topicSelect = document.getElementById("topicSelect");
+
+function showActivePanel() {
+    document.querySelectorAll(".topicPanel").forEach(panel => {
+        panel.classList.toggle("active", panel.id === "panel-" + topicSelect.value);
+    });
+}
+
+topicSelect.addEventListener("change", showActivePanel);
+showActivePanel();
+
+
+/* ===========================================================
+   THEMEN-KONFIGURATION
+=========================================================== */
+
+function getMatrixSelection(typeItems, typeContainerId, caseContainerId) {
+
+    const selTypes = getChecked(document.getElementById(typeContainerId), typeItems);
+    const selCases = getChecked(document.getElementById(caseContainerId), cases);
+
+    return selTypes.map(t => ({
+        id: t.id,
+        label: t.name,
+        cases: selCases.map(c => ({ ...c }))
+    }));
+
+}
+
+const topics = {
+
+    artikel: {
+        columns: nounColumns,
+        lookup: articleFormsLookup,
+        getRowTypes: () => getMatrixSelection(articleTypes, "artikelTypeSelection", "artikelCaseSelection")
+    },
+
+    derwoerter: {
+        columns: nounColumns,
+        lookup: derWordFormsLookup,
+        getRowTypes: () => getMatrixSelection(derWordTypes, "derwoerterTypeSelection", "derwoerterCaseSelection")
+    },
+
+    adjektiv: {
+        columns: nounColumns,
+        lookup: adjFormsLookup,
+        getRowTypes: () => getMatrixSelection(articleTypes, "adjektivTypeSelection", "adjektivCaseSelection")
+    },
+
+    pronomen: {
+        columns: pronounColumns,
+        lookup: pronomenFormsLookup,
+        getRowTypes: () => {
+
+            const rowTypes = [];
+
+            if (document.getElementById("pronomenPersonal").checked) {
+                rowTypes.push({
+                    id: "personal",
+                    label: "Personalpronomen",
+                    cases: cases.map(c => ({ ...c }))
+                });
+            }
+
+            if (document.getElementById("pronomenReflexiv").checked) {
+                rowTypes.push({
+                    id: "reflexiv",
+                    label: "Reflexivpronomen",
+                    cases: cases.filter(c => c.id === "dat" || c.id === "akk").map(c => ({ ...c }))
+                });
+            }
+
+            return rowTypes;
+
+        }
+    },
+
+    zeitangaben: {
+        columns: timeColumns,
+        lookup: zeitFormsLookup,
+        getRowTypes: () => {
+
+            const selTypes = getChecked(document.getElementById("zeitTypeSelection"), timeWords);
+
+            return selTypes.map(t => ({
+                id: t.id,
+                label: t.name,
+                cases: [{ id: "akk", name: "Akkusativ", frage: "wann? (Zeitangabe)" }],
+                hideCaseInLabel: true
+            }));
+
+        }
+    }
+
+};
+
+
+/* ===========================================================
+   GENERISCHE MATRIX-ENGINE
+=========================================================== */
+
+function buildMatrixTable(rowTypeDefs, columns, lookup) {
+
+    const rows = [];
+
+    rowTypeDefs.forEach(rowType => {
+
+        rowType.cases.forEach((caseItem, idx) => {
+
+            const displayLabel = rowType.hideCaseInLabel
+                ? rowType.label
+                : `${rowType.label} – ${caseItem.name}`;
+
+            const cellValues = columns.map(col => {
+
+                const cell = lookup(rowType.id, col.id, caseItem.id);
+
+                if (!cell) {
+                    return { na: true };
+                }
+
+                return { na: false, main: cell.main, alt: cell.alt };
+
+            });
+
+            rows.push({
+                displayLabel,
+                frage: caseItem.frage,
+                beispielverb: caseItem.beispielverb,
+                groupStart: idx === 0,
+                cells: cellValues
+            });
+
+        });
+
+    });
+
+    return { columns, rows };
+
+}
+
+
+/* ===========================================================
+   RENDER / PRÜFEN / LÖSUNGEN / ZURÜCKSETZEN
+   (themenunabhängig)
+=========================================================== */
+
+const exercise = document.getElementById("exercise");
+const headerRow = document.getElementById("headerRow");
+const tableBody = document.getElementById("tableBody");
+
+const checkBtn = document.getElementById("checkBtn");
+const solutionBtn = document.getElementById("solutionBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const scoreEl = document.getElementById("score");
+const percentEl = document.getElementById("percent");
+
+let cells = [];
+let answersVisible = false;
+
+function normalize(str) {
+    return str.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function renderTable(matrix) {
+
+    headerRow.innerHTML = "";
+    tableBody.innerHTML = "";
+    cells = [];
+
+    const first = document.createElement("th");
+    first.textContent = "Form";
+    headerRow.appendChild(first);
+
+    matrix.columns.forEach(col => {
+        const th = document.createElement("th");
+        th.innerHTML = `${col.label}<span class="subLabel">${col.sub || ""}</span>`;
+        headerRow.appendChild(th);
+    });
+
+    matrix.rows.forEach((row, rowIndex) => {
+
+        const tr = document.createElement("tr");
+        if (row.groupStart) tr.classList.add("groupStart");
+
+        const verbHint = row.beispielverb ? ` · z. B. <em>${row.beispielverb}</em>` : "";
+
+        const labelTd = document.createElement("td");
+        labelTd.innerHTML = `<strong>${row.displayLabel}</strong><span class="caseFrage">${row.frage}${verbHint}</span>`;
+        tr.appendChild(labelTd);
+
+        cells[rowIndex] = [];
+
+        row.cells.forEach((cell, colIndex) => {
+
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+
+            input.type = "text";
+            input.dataset.row = rowIndex;
+            input.dataset.col = colIndex;
+
+            if (cell.na) {
+
+                input.disabled = true;
+                input.placeholder = "—";
+
+            } else {
+
+                const alternatives = [normalize(cell.main)];
+                if (cell.alt) alternatives.push(normalize(cell.alt));
+
+                input.dataset.answers = JSON.stringify(alternatives);
+                input.dataset.display = cell.main;
+
+            }
+
+            td.appendChild(input);
+            tr.appendChild(td);
+
+            cells[rowIndex][colIndex] = input;
+
+        });
+
+        tableBody.appendChild(tr);
+
+    });
+
+}
+
+function clearSolutions() {
+    document.querySelectorAll(".solution").forEach(el => el.remove());
+}
+
+function showSolution(input, text) {
+    const div = document.createElement("div");
+    div.className = "solution";
+    div.textContent = "✔ " + text;
+    input.parentElement.appendChild(div);
+}
+
+function updateStatistics(correct, total) {
+    scoreEl.textContent = `${correct} / ${total}`;
+    percentEl.textContent = total === 0 ? "0 %" : `${Math.round(correct / total * 100)} %`;
+}
+
+function checkAnswers() {
+
+    clearSolutions();
+    answersVisible = false;
+    solutionBtn.textContent = "💡 Lösungen anzeigen";
+
+    let correct = 0;
+    let total = 0;
+
+    cells.forEach(row => {
+
+        row.forEach(input => {
+
+            input.classList.remove("correct", "wrong");
+
+            if (input.disabled) return;
+
+            total++;
+
+            const alternatives = JSON.parse(input.dataset.answers);
+            const user = normalize(input.value);
+
+            if (alternatives.includes(user)) {
+                input.classList.add("correct");
+                correct++;
+            } else {
+                input.classList.add("wrong");
+            }
+
+        });
+
+    });
+
+    updateStatistics(correct, total);
+
+}
+
+function revealAnswers() {
+
+    if (!answersVisible) {
+
+        clearSolutions();
+
+        cells.forEach(row => {
+            row.forEach(input => {
+                if (input.disabled) return;
+                showSolution(input, input.dataset.display);
+            });
+        });
+
+        solutionBtn.textContent = "🙈 Lösungen ausblenden";
+        answersVisible = true;
+
+    } else {
+
+        clearSolutions();
+        solutionBtn.textContent = "💡 Lösungen anzeigen";
+        answersVisible = false;
+
+    }
+
+}
+
+function resetExercise() {
+
+    clearSolutions();
+
+    let total = 0;
+
+    cells.forEach(row => {
+        row.forEach(input => {
+            input.value = "";
+            input.classList.remove("correct", "wrong");
+            if (!input.disabled) total++;
+        });
+    });
+
+    answersVisible = false;
+    solutionBtn.textContent = "💡 Lösungen anzeigen";
+
+    updateStatistics(0, total);
+
+}
+
+checkBtn.addEventListener("click", checkAnswers);
+solutionBtn.addEventListener("click", revealAnswers);
+resetBtn.addEventListener("click", resetExercise);
+
+document.addEventListener("input", event => {
+    if (event.target.tagName !== "INPUT") return;
+    event.target.classList.remove("correct", "wrong");
+});
+
+
+/* ===========================================================
+   START
+=========================================================== */
+
+const startBtn = document.getElementById("startBtn");
+
+startBtn.addEventListener("click", () => {
+
+    const topic = topics[topicSelect.value];
+    const rowTypeDefs = topic.getRowTypes();
+
+    const totalRows = rowTypeDefs.reduce((n, rt) => n + rt.cases.length, 0);
+
+    if (totalRows === 0) {
+        alert("Bitte wähle mindestens eine Option in den Filtern oben aus.");
+        return;
+    }
+
+    const matrix = buildMatrixTable(rowTypeDefs, topic.columns, topic.lookup);
+    renderTable(matrix);
+
+    exercise.style.display = "block";
+    answersVisible = false;
+    solutionBtn.textContent = "💡 Lösungen anzeigen";
+    checkBtn.textContent = "✔ Antworten prüfen";
+
+});
+
+
+/* ===========================================================
+   TASTATURNAVIGATION
+=========================================================== */
+
+document.addEventListener("keydown", event => {
+
+    const input = document.activeElement;
+
+    if (input.tagName !== "INPUT" || input.dataset.row === undefined) {
+        return;
+    }
+
+    const row = Number(input.dataset.row);
+    const col = Number(input.dataset.col);
+
+    const focusIfEnabled = target => {
+        if (target && !target.disabled) target.focus();
+    };
+
+    if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (cells[row + 1]) focusIfEnabled(cells[row + 1][col]);
+    }
+
+    if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (cells[row - 1]) focusIfEnabled(cells[row - 1][col]);
+    }
+
+    if (event.key === "ArrowRight") {
+        event.preventDefault();
+        if (cells[row][col + 1]) focusIfEnabled(cells[row][col + 1]);
+    }
+
+    if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        if (cells[row][col - 1]) focusIfEnabled(cells[row][col - 1]);
+    }
+
+    if (event.key === "Enter") {
+        event.preventDefault();
+        if (!event.shiftKey && cells[row + 1]) focusIfEnabled(cells[row + 1][col]);
+        if (event.shiftKey && cells[row - 1]) focusIfEnabled(cells[row - 1][col]);
+    }
+
+});
+
+</script>
+
+</body>
+</html>

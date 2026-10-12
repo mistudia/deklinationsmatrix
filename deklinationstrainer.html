@@ -369,6 +369,33 @@ input[type="text"]:disabled{
     margin-bottom:14px;
 }
 
+.optionRow{
+    margin:4px 0 18px;
+    padding:12px 14px;
+    background:#f5f8fc;
+    border:1px solid var(--line);
+    border-radius:12px;
+}
+
+.optionRow label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.optionRow input[type="checkbox"]{
+    width:17px;
+    height:17px;
+    accent-color:var(--brand);
+    cursor:pointer;
+}
+
+.optionRow .hint{
+    margin:4px 0 0 27px;
+}
+
 @media(max-width:640px){
     .filterGroups{ gap:18px; }
 }
@@ -551,6 +578,17 @@ input[type="text"]:disabled{
 
     </div>
 
+    <div class="optionRow" id="strictRow">
+        <label>
+            <input type="checkbox" id="strictMode">
+            Strenger Modus: Nomen mitschreiben
+        </label>
+        <p class="hint">
+            Ohne strengen Modus reicht der Teil vor dem Nomen (z. B. „des großen" statt „des großen Mannes").
+            Wer das Nomen trotzdem schreibt, muss es richtig deklinieren. Im strengen Modus ist das Nomen Pflicht.
+        </p>
+    </div>
+
     <button id="startBtn" type="button">Übung starten</button>
 
 </section>
@@ -602,11 +640,12 @@ const cases = [
     { id: "akk", name: "Akkusativ",  frage: "wen / was?",  beispielverb: "sehen" }
 ];
 
+// hasNoun: Antwort endet auf ein Nomen, das außerhalb des strengen Modus weggelassen werden darf
 const nounColumns = [
-    { id: "mann",     label: "der Mann",     sub: "Maskulinum" },
-    { id: "frau",     label: "die Frau",     sub: "Femininum" },
-    { id: "kind",     label: "das Kind",     sub: "Neutrum" },
-    { id: "personen", label: "die Personen", sub: "Plural" }
+    { id: "mann",     label: "der Mann",     sub: "Maskulinum", hasNoun: true },
+    { id: "frau",     label: "die Frau",     sub: "Femininum",  hasNoun: true },
+    { id: "kind",     label: "das Kind",     sub: "Neutrum",    hasNoun: true },
+    { id: "personen", label: "die Personen", sub: "Plural",     hasNoun: true }
 ];
 
 
@@ -816,10 +855,10 @@ const timeWords = [
 ];
 
 const timeColumns = [
-    { id: "montag", label: "der Montag", sub: "Maskulinum" },
-    { id: "woche",  label: "die Woche",  sub: "Femininum" },
-    { id: "jahr",   label: "das Jahr",   sub: "Neutrum" },
-    { id: "ferien", label: "die Ferien", sub: "nur Plural" }
+    { id: "montag", label: "der Montag", sub: "Maskulinum", hasNoun: true },
+    { id: "woche",  label: "die Woche",  sub: "Femininum",  hasNoun: true },
+    { id: "jahr",   label: "das Jahr",   sub: "Neutrum",    hasNoun: true },
+    { id: "ferien", label: "die Ferien", sub: "nur Plural", hasNoun: true }
 ];
 
 const timeForms = {
@@ -899,10 +938,15 @@ document.querySelectorAll(".noneBtn").forEach(btn => {
 
 const topicSelect = document.getElementById("topicSelect");
 
+const strictModeCheckbox = document.getElementById("strictMode");
+const strictRow = document.getElementById("strictRow");
+
 function showActivePanel() {
     document.querySelectorAll(".topicPanel").forEach(panel => {
         panel.classList.toggle("active", panel.id === "panel-" + topicSelect.value);
     });
+    // Pronomen haben kein Nomen – Option dort ausblenden
+    strictRow.style.display = topicSelect.value === "pronomen" ? "none" : "";
 }
 
 topicSelect.addEventListener("change", showActivePanel);
@@ -1062,6 +1106,12 @@ function normalize(str) {
     return str.trim().replace(/\s+/g, " ").toLowerCase();
 }
 
+// Entfernt das letzte Wort (das Nomen): "des großen Mannes" -> "des großen"
+function stripNoun(str) {
+    const parts = str.trim().split(/\s+/);
+    return parts.length > 1 ? parts.slice(0, -1).join(" ") : str;
+}
+
 function renderTable(matrix) {
 
     headerRow.innerHTML = "";
@@ -1111,6 +1161,12 @@ function renderTable(matrix) {
                 if (cell.alt) alternatives.push(normalize(cell.alt));
 
                 input.dataset.answers = JSON.stringify(alternatives);
+
+                // Kurzformen ohne Nomen (nur gültig, wenn der strenge Modus aus ist)
+                if (matrix.columns[colIndex].hasNoun) {
+                    const shortForms = [...new Set(alternatives.map(stripNoun))];
+                    input.dataset.short = JSON.stringify(shortForms);
+                }
                 input.dataset.display = cell.main;
 
             }
@@ -1153,6 +1209,8 @@ function checkAnswers() {
     let correct = 0;
     let total = 0;
 
+    const strict = strictModeCheckbox.checked;
+
     cells.forEach(row => {
 
         row.forEach(input => {
@@ -1164,6 +1222,9 @@ function checkAnswers() {
             total++;
 
             const alternatives = JSON.parse(input.dataset.answers);
+            if (!strict && input.dataset.short) {
+                alternatives.push(...JSON.parse(input.dataset.short));
+            }
             const user = normalize(input.value);
 
             if (alternatives.includes(user)) {
